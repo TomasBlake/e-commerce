@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AppThunk, RootState } from "../app/store";
 import { clientSnipCard } from "../client";
-import { Order, SnipcardError } from "../Types";
+import { Order, SnipcartError } from "../Types";
 
 export interface OrdersResponse {
     totalItems: number;
@@ -13,7 +13,7 @@ export interface OrdersResponse {
 export interface OrdersState {
     orders: Order[];
     isLoading: boolean;
-    error?: SnipcardError;
+    error?: SnipcartError;
     order?: Order;
 }
 
@@ -32,13 +32,13 @@ export const ordersSlice = createSlice({
         setOrdersSuccess: (state, {payload} : PayloadAction<Order[]>) => {
             state.orders = payload;
         },
-        setOrdersFaild: (state, {payload} : PayloadAction<SnipcardError>) => {
+        setOrdersFaild: (state, {payload} : PayloadAction<SnipcartError>) => {
             state.error = payload;
         },
         setOrderSuccess: (state, {payload} : PayloadAction<Order>) => {
             state.order = payload;
         },
-        setOrderFaild: (state, {payload} : PayloadAction<SnipcardError>) => {
+        setOrderFaild: (state, {payload} : PayloadAction<SnipcartError>) => {
             state.error = payload;
         }
     }
@@ -55,7 +55,7 @@ export const getOrders = () : AppThunk => async (dispatch) => {
         const orders = response.data.items;
         dispatch(setOrdersSuccess(orders));
     } catch (error) {
-        dispatch(setOrdersFaild(error));
+        dispatch(setOrdersFaild(error as SnipcartError));
     } finally {
         dispatch(setLoading(false));
     }
@@ -72,7 +72,7 @@ export const getOrder = (token: string) : AppThunk => async (dispatch) => {
         const order = response.data;
         dispatch(setOrderSuccess(order));
     } catch (error) {
-        dispatch(setOrderFaild(error));
+        dispatch(setOrderFaild(error as SnipcartError));
     } finally {
         dispatch(setLoading(false));
     }
@@ -101,7 +101,7 @@ export const putOrder = (
         const order = response.data;
         dispatch (setOrderSuccess(order));
     } catch (error) {
-        dispatch(setOrderFaild(error));
+        dispatch(setOrderFaild(error as SnipcartError));
     } finally {
         dispatch(setLoading(false));
     }

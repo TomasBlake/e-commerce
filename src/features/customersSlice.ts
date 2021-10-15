@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AppThunk } from "../app/store";
 import { clientSnipCard } from "../client";
-import { Customer, SnipcardError } from "../Types";
+import { Customer, SnipcartError } from "../Types";
 
 export interface CustomerState {
     customer?: Customer;
-    error?: SnipcardError;
+    error?: SnipcartError;
     isLoading: boolean;
 }
 
@@ -25,7 +25,7 @@ const customerSlice = createSlice({
         setCustomerSuccess: (state, {payload} : PayloadAction<Customer>) => {
             state.customer = payload;
         },
-        setCustomerFaild: (state, {payload} : PayloadAction<SnipcardError>) => {
+        setCustomerFaild: (state, {payload} : PayloadAction<SnipcartError>) => {
             state.error = payload;
         }
     }
@@ -44,10 +44,10 @@ export const getCustomer = (id: string) : AppThunk => async (dispatch) => {
         const customer = response.data;
         dispatch(setCustomerSuccess(customer));
     } catch (error) {
-        dispatch(setCustomerFaild(error));
+        dispatch(setCustomerFaild(error as SnipcartError));
     } finally {
         dispatch(isLoading(false));
     }
 }
 
-export default customerSlice;
+export default customerSlice.reducer;

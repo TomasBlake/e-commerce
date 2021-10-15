@@ -1,13 +1,12 @@
 export interface Category {
     id: string;
     name: string;
-    subCategories: SubCategory[];
+    subcategories: Subcategory[];
 }
 
-export interface SubCategory {
+export interface Subcategory {
     id: string;
     name: string;
-    url: string;
 }
 
 export interface ProductStatistic {
@@ -21,11 +20,21 @@ export interface ProductMetadata {
 }
 
 export interface Product {
-    mode: string;
+    id: string;
+    Name: string;
+    Description: string;
+    Pictures: {
+        url: string;
+    }[];
+    Price: number;
+    category: Category;
+    subcategory: Subcategory;
+
+    /*mode: string;
     userDefinedId: string;
     url: string;
     price: number;
-    name: string;
+    Name: string;
     description: string;
     image: string;
     archived: boolean;
@@ -34,7 +43,7 @@ export interface Product {
     metadata: ProductMetadata;
     id: string;
     creationDate: Date;
-    modificationDate: Date;
+    modificationDate: Date;*/
 }
 
 export interface Order {
@@ -78,14 +87,18 @@ export interface Order {
     paymentTransactionId: string;
 }
 
-export interface ProductsResponse {
+export interface ProductsResponseSnipcard {
   totalItems: number;
   offset: number;
   limit: number;
   items: Product[];
 }
 
-export interface SnipcardError {
+export interface ProductsResponseStrapi {
+
+}
+
+export interface SnipcartError {
     message: string;
     errors: {
         parameter: unknown[];

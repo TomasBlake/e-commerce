@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AppThunk, RootState } from "../app/store";
-import { clientSnipCard } from "../client";
-import { Category } from "../Types";
+import { clientSnipCard, clientStrapi } from "../client";
+import { Category, SnipcartError } from "../Types";
 
 export interface CategoriesError {
     message: string;
@@ -41,10 +41,10 @@ export const categoriesSelector = (state: RootState) => state.categories;
 export const getCategories = () : AppThunk => async(dispatch) => {
     try {
         dispatch(setLoading(true));
-        const categories = await clientSnipCard.get("") as Category[]; // TO-DO
-        dispatch(setCategoriesSuccess(categories));
+        const response = await clientStrapi.get("/categories");
+        dispatch(setCategoriesSuccess(response.data));
     } catch (error) {
-        dispatch(setCategoriesFaild(error));
+        dispatch(setCategoriesFaild(error as SnipcartError));
     } finally {
         dispatch(setLoading(false));
     }

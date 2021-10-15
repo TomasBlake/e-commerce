@@ -1,12 +1,12 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { AnyAction, createSlice, isAsyncThunkAction, PayloadAction } from "@reduxjs/toolkit";
 import { AppThunk, RootState } from "../app/store";
-import { clientSnipCard } from "../client";
-import { Product, ProductsResponse, SnipcardError } from "../Types";
+import { clientSnipCard, clientStrapi } from "../client";
+import { Product, SnipcartError } from "../Types";
 
 export interface ProductsState {
     products: Product[];
     isLoading: boolean;
-    error?: SnipcardError;
+    error?: any;
 }
 
 const initialState: ProductsState = {
@@ -24,7 +24,7 @@ export const productsSlice = createSlice({
         setProductsSuccess: (state, {payload} : PayloadAction<Product[]>) => {
             state.products = payload;
         },
-        setProductsFaild: (state, {payload} : PayloadAction<SnipcardError>) => {
+        setProductsFaild: (state, {payload} : PayloadAction<SnipcartError>) => {
             state.error = payload;
         },
         setProductSuccess: (state, {payload} : PayloadAction<Product>) => {
@@ -33,7 +33,7 @@ export const productsSlice = createSlice({
             });
             state.products = [...products, payload];
         },
-        setProductFaild: (state, {payload}: PayloadAction<SnipcardError>) => {
+        setProductFaild: (state, {payload}: PayloadAction<any>) => {
             state.error = payload;
         }
     }
@@ -41,27 +41,27 @@ export const productsSlice = createSlice({
 
 const { setLoading, setProductsSuccess, setProductsFaild, setProductSuccess, setProductFaild } = productsSlice.actions;
 
-export const productsSelector = (state : RootState) => state.productsState.products;
-export const productSelector = (state : RootState, id: string) => state.productsState.products.find(product => product.id === id);
+export const productsSelector = (state : RootState) => state.products.products;
+export const productSelector = (state : RootState, id: string) => state.products.products.find(product => product.id === id);
 
-export const getProduct = (id: string): AppThunk => async (dispatch) => {
+export const getProduct = (token: string): AppThunk => async (dispatch) => {
     try {
         dispatch(setLoading(true));
         const response = await clientSnipCard.get<Product>("/params", {
             params: {
-                id
+                token
             }    
         })
         const product = response.data;
         dispatch(setProductSuccess(product));
     } catch (error) {
-        dispatch(setProductFaild(error));
+        dispatch(setProductFaild(error as SnipcartError));
     } finally {
         dispatch(setLoading(false));
     }
 }
 
-export const getProducts = (
+/*export const getProductsFromStrapi = (    
     limit?: number, 
     offset?: number, 
     from?: Date, 
@@ -82,7 +82,26 @@ export const getProducts = (
         const products = response.data.items;
         dispatch(setProductsSuccess(products));
     } catch (error) {
-        dispatch(setProductsFaild(error));
+        dispatch(setProductsFaild(error as SnipcartError));
+    } finally {
+        dispatch(setLoading(true));
+    }
+}*/
+
+export const getProductsFromStrapi = (): AppThunk => async (dispatch) => {
+    try {
+        dispatch(setLoading(true));
+        const response = await clientStrapi.get("/products", { 
+            params: {
+              
+            }
+        });
+        console.log("[RESPONSE_FROM_STRAPI]:", response); 
+        const products = response.data;
+    
+        dispatch(setProductsSuccess(products));
+    } catch (error) {
+        dispatch(setProductsFaild(error as any));
     } finally {
         dispatch(setLoading(true));
     }

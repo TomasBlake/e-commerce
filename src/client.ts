@@ -5,6 +5,14 @@ export const clientSnipCard = Axios.create({
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'Authorization': `Basic${Buffer.from(process.env.SNIPCART_SECRETE_API_KEY as string, 'base64')}`
+        'Authentication': `Basic${Buffer.from(process.env.SNIPCART_SECRETE_API_KEY || "", 'base64')}`
+    }
+});
+
+export const clientStrapi = Axios.create({
+    baseURL: "http://localhost:1337", // process.env.STRAPI_BASE_URL,
+    headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
     }
 });

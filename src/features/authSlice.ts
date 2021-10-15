@@ -1,13 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import Axios from "axios";
+import { clientStrapi } from "../client";
 import { AppThunk, RootState } from "../app/store";
-import { SnipcardError } from "../Types";
+import { SnipcartError } from "../Types";
 
 export interface AuthState {
     isAuth: boolean;
     currentUser?: CurrentUser;
     isLoading: boolean;
-    error?: SnipcardError;
+    error?: SnipcartError;
 }
 
 export interface CurrentUser {
@@ -21,6 +21,8 @@ export const initialState: AuthState = {
     isAuth: false,
     isLoading: false
 };
+
+// Will work through Strapi
 
 export const authSlice = createSlice({
     name: "auth",
@@ -37,7 +39,7 @@ export const authSlice = createSlice({
             state.isAuth = false
             state.currentUser = undefined
         },
-        setAuthFailed: (state, { payload }: PayloadAction<SnipcardError>) => {
+        setAuthFailed: (state, { payload }: PayloadAction<SnipcartError>) => {
             state.error = payload
             state.isAuth = false
         },
@@ -46,15 +48,28 @@ export const authSlice = createSlice({
 
 export const {setLoading, setAuthSuccess, setLogOut, setAuthFailed} = authSlice.actions;
 
-export const authSelector = (state: RootState) => state.auth;
+//export const authSelector = (state: RootState) => state.auth;
+
+export const register = () : AppThunk => async (dispatch) => {
+    try {
+        dispatch(setLoading(true));
+        const response = await clientStrapi.post("/auth/local/register", {
+           
+        })
+    } catch (error) {
+        
+    } finally {
+        dispatch(setLoading(false));
+    }
+}
 
 export const login = () : AppThunk => async (dispatch) => {
     try {
         dispatch(setLoading(true));
-        const currentUser = await Axios.get("") as CurrentUser; // TO-DO
-        dispatch(setAuthSuccess(currentUser));
+        //const currentUser = await Axios.get("") as CurrentUser; // TO-DO
+        //dispatch(setAuthSuccess(currentUser));
     } catch (error) {
-        dispatch(setAuthFailed(error));
+        dispatch(setAuthFailed(error as SnipcartError));
     } finally {
         dispatch(setLoading(false));
     }
@@ -63,13 +78,13 @@ export const login = () : AppThunk => async (dispatch) => {
 export const logOut = () : AppThunk => async (dispatch) => {
     try {
         dispatch(setLoading(true));
-        await Axios.get(""); // TO-DO
+        //await Axios.get(""); // TO-DO
         dispatch(setLogOut);
     } catch (error) {
-        dispatch(setAuthFailed(error));
+        dispatch(setAuthFailed(error as SnipcartError));
     } finally {
         dispatch(setLoading(false));
     }
 }
 
-export default authSlice.reducer;
+// export default authSlice.reducer;
